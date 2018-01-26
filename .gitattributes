@@ -1,0 +1,10 @@
+LICENSE filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset filter=lfs diff=lfs merge=lfs -text
+README.md filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset/links.csv filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset/ratings.csv filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset/movies.csv filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset filter=lfs diff=lfs merge=lfs -text
+MovieLens[[:space:]]26M[[:space:]]Dataset/README.txt filter=lfs diff=lfs merge=lfs -text
