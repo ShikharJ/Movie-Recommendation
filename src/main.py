@@ -1,5 +1,6 @@
 import pandas
 import numpy
+import matplotlib
 
 
 class Basic(object):
@@ -46,6 +47,12 @@ class Basic(object):
 
 		self.mu = numpy.mean(Y)
 
+	def RMSE(self, X, Y):
+		return None
+
+	def MAE(self, X, Y):
+		return None
+
 
 class Baseline(Basic):
 
@@ -65,12 +72,57 @@ class Baseline(Basic):
 		return self.mu + b_u + b_i
 
 
-class CollaborativeFiltering(Basic):
+class UserUserCollaborativeFiltering(Basic):
 	
-	def __init__(self, beta_u=25, beta_i=25):
-		super(Baseline, self).__init__()
-		self.beta_u = beta_u
-		self.beta_i = beta_i
+	def __init__(self, N=20):
+		super(UserUserCollaborativeFiltering, self).__init__()
+		self.N = N
 
 	def train(self, X, Y):
-		Basic.preprocess(self, X, Y)	
+		Basic.preprocess(self, X, Y)
+
+	def predict(self, u, i):
+		return None
+
+	def pearson_correlation(self, u, v):
+		return None
+
+
+class ItemItemCollaborativeFiltering(Basic):
+	
+	def __init__(self, N=20):
+		super(ItemItemCollaborativeFiltering, self).__init__()
+		self.N = N
+
+	def train(self, X, Y):
+		Basic.preprocess(self, X, Y)
+
+	def predict(self, u, i):
+		return None
+
+	def cosine_correlation(self, i, j):
+		return None
+
+
+class SingularValueDecomposition(Basic):
+
+	def __init__(self):
+		super(SingularValueDecomposition, self).__init__()
+
+	def train(self, X, Y):
+		Basic.preprocess(self, X, Y)
+
+	def predict(self, u, i):
+		return None
+
+
+class RestrictedBoltzmannMachines(Basic):
+
+	def __init__(self):
+		super(RestrictedBoltzmannMachines, self).__init__()
+
+	def train(self, X, Y):
+		Basic.preprocess(self, X, Y)
+
+	def predict(self, u, i):
+		return None
