@@ -47,6 +47,8 @@ class Basic(object):
 
 		self.mu = numpy.mean(Y)
 
+	train = preprocess
+
 	def RMSE(self, X, Y):
 		return None
 
@@ -61,9 +63,6 @@ class Baseline(Basic):
 		self.beta_u = beta_u
 		self.beta_i = beta_i
 
-	def train(self, X, Y):
-		Basic.preprocess(self, X, Y)
-
 	def predict(self, u, i):
 		if len(self.user_movies[u]):
 			b_u = ((self.user_mean_ratings[u] - self.mu) * len(self.user_movies[u])) / (len(self.user_movies[u]) + self.beta_u)
@@ -72,35 +71,81 @@ class Baseline(Basic):
 		return self.mu + b_u + b_i
 
 
-class UserUserCollaborativeFiltering(Basic):
-	
-	def __init__(self, N=20):
-		super(UserUserCollaborativeFiltering, self).__init__()
+class KNearestNeighbours(Basic):
+
+	def __init__(self, N):
+		super(KNearestNeighbours, self).__init__()
 		self.N = N
-
-	def train(self, X, Y):
-		Basic.preprocess(self, X, Y)
-
-	def predict(self, u, i):
-		return None
 
 	def pearson_correlation(self, u, v):
-		return None
-
-
-class ItemItemCollaborativeFiltering(Basic):
-	
-	def __init__(self, N=20):
-		super(ItemItemCollaborativeFiltering, self).__init__()
-		self.N = N
-
-	def train(self, X, Y):
-		Basic.preprocess(self, X, Y)
-
-	def predict(self, u, i):
-		return None
+		common_movies = numpy.intersect1d(self.user_movies[u], self.user_movies[v], assume_unique=True)
+		if (not len(common_movies)):
+			l1, l2 = [0], [0]
+		else:
+			l1 = [self.R[u][i] - self.user_mean_ratings[u] for i in common_movies]
+			l2 = [self.R[v][i] - self.user_mean_ratings[v] for i in common_movies]
+		r = numpy.dot(l1, l2)
+		if r:
+			r /= numpy.sqrt(numpy.sum(numpy.square(l1)) * numpy.sum(numpy.square(l2)))
+		return r
 
 	def cosine_correlation(self, i, j):
+		common_users = numpy.intersect1d(self.movie_users[i], self.movie_users[j], assume_unique=True)
+		if (not len(common_users)):
+			l1, l2 = [0], [0]
+		else:
+			l1 = [self.R[u][i] - self.user_mean_ratings[u] for u in common_users]
+			l2 = [self.R[u][j] - self.user_mean_ratings[u] for u in common_users]
+		r = numpy.dot(l1, l2)
+		if r:
+			r /= numpy.sqrt(numpy.sum(numpy.square(l1)) * numpy.sum(numpy.square(l2)))
+		return r
+
+
+class UserUserCollaborativeFiltering(KNearestNeighbours):
+	
+	def __init__(self, N=20):
+		super(UserUserCollaborativeFiltering, self).__init__(N)
+		self.user_neighbourhood = {}
+
+	def generate_neighbourhood(self, u):
+		neighbourhood = []
+		for v in self.users:
+			if v != u:
+				neighbourhood.append((self.pearson_correlation(u, v), v))
+		neighbourhood = sorted(neighbourhood, reverse=True)
+		return neighbourhood
+
+	def predict(self, u, i):
+		prediction, numer, denom = self.user_mean_ratings[u], 0,  0
+		if not self.user_neighbourhood.has_key[u]:
+			self.user_neighbourhood[u] = self.generate_neighbourhood(u)
+		for n in range(self.N):
+			v = self.user_neighbourhood[u][n][1]
+			if self.R[v][i] != 0:
+				if self.user_standard_deviations[v] != 0:
+					numer += self.user_neighbourhood[u][n][0] * (self.R[v][i] - self.user_mean_ratings[v]) / self.user_standard_deviations[v]
+				denom += numpy.abs(self.user_neighbourhood[u][n][0])
+		if b != 0:
+			prediction += self.user_standard_deviations[u] * numer / denom
+		return prediction
+
+
+class ItemItemCollaborativeFiltering(KNearestNeighbours):
+	
+	def __init__(self, N=20):
+		super(ItemItemCollaborativeFiltering, self).__init__(N)
+		self.movie_neighbourhood = {}
+
+	def generate_neighbourhood(self, i):
+		neighbourhood = []
+		for j in self.movies:
+			if j != i:
+				neighbourhood.append((self.cosine_correlation(i, j), j))
+		neighbourhood = sorted(neighbourhood, reverse=True)
+		return neighbourhood
+
+	def predict(self, u, i):
 		return None
 
 
@@ -108,9 +153,6 @@ class SingularValueDecomposition(Basic):
 
 	def __init__(self):
 		super(SingularValueDecomposition, self).__init__()
-
-	def train(self, X, Y):
-		Basic.preprocess(self, X, Y)
 
 	def predict(self, u, i):
 		return None
@@ -120,9 +162,6 @@ class RestrictedBoltzmannMachines(Basic):
 
 	def __init__(self):
 		super(RestrictedBoltzmannMachines, self).__init__()
-
-	def train(self, X, Y):
-		Basic.preprocess(self, X, Y)
 
 	def predict(self, u, i):
 		return None
