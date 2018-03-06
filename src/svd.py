@@ -19,6 +19,12 @@ class SingularValueDecomposition(Basic):
 			x += self.mu + self.alpha[u] + self.beta[i]
 		return x
 
+	def test_train_split(self, X, n):
+        numpy.random.shuffle(X)
+        l = (int)(X.shape[0] * (n - 1) / n)
+        self.X_train, self.X_test = X[:l, :], X[l:, :]
+		self.y_test = self.X_test[:, 2]
+
 	def train(self, X, Y):
 		Basic.preprocess(self, X, Y)
 		self.U = numpy.empty((self.u_len + 1, self.f))
@@ -30,4 +36,28 @@ class SingularValueDecomposition(Basic):
 			row.fill(initial_val)
 		for row in self.M:
 			row.fill(initial_val)
-		return None
+		self.test_train_split(X, 5)
+		cost = float('inf')
+		U_temp = numpy.zeros(self.dim)
+		for r in range(self.epochs):
+			for x in self.X_train:
+				u, m = x[0], x[1]
+				error = R[u][m] - self.predict(u, m)
+				U_temp = self.U[u] + self.learning_rate * (error * self.M[m] - self.U[u] * self.k_u)
+				self.M[m] += self.learning_rate * (error * self.U[u] - self.M[m] * self.k_m)
+				self.U[u] = U_temp[:]
+				if self.bias == True:
+					self.alpha[u] += self.learning_rate * (error - self.k_b * self.alpha[u])
+					self.beta[m] += self.learning_rate*(error - self.k_b*self.beta[m])
+			current_error = self.validation_error()
+			if current_error < cost:
+				cost = current_error
+			else:
+				break
+
+	def validation_error(self):
+		return self.test(self.X_test, self.y_test)
+
+	def test(self, X, Y):
+		y_pred = [self.predict_rating(i[0], i[1]) for i in X]
+		return numpy.sqrt(numpy.mean((Y - y_pred) ** 2))
