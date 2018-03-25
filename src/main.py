@@ -4,6 +4,8 @@ import pickle
 import matplotlib.pyplot
 from basic import Basic
 from baseline import Baseline
+from userusercf import UserUserCollaborativeFiltering
+from itemitemcf import ItemItemCollaborativeFiltering
 
 
 print("--------------------Begin Training and Testing Phase-------------------")
@@ -37,12 +39,35 @@ else:
 	
 	print("----------------------------Datasets Loaded----------------------------")
 
-
+'''
 print("-----------------------Baseline Predictor Testing----------------------")
 
+space = (numpy.linspace(1, 301, 100)).astype(int)
+scores = []
+
+for k in space:
+	print("Epoch: ", k)
+	model = Baseline(k, k)
+	model.train(X, Y)
+	score = model.RMSE(X_test, Y_test)
+	print("RMSE: ", score)
+	scores.append(score)
+
+matplotlib.pyplot.plot(space, scores, 'ro')
+matplotlib.pyplot.xlabel('Beta')
+matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.title('Baseline Predictor')
+matplotlib.pyplot.savefig('../plots/baseline_predictor.png')
+matplotlib.pyplot.show()
+
+print("------------------Baseline Predictor Testing Complete------------------")
+'''
+
+print("----------------User User Collaborative Filtering Testing--------------")
+
 model = Baseline()
-model.preprocess(X, Y)
-space = (numpy.linspace(1, 301, 50)).astype(int)
+model.train(X, Y)
+space = (numpy.linspace(1, 301, 100)).astype(int)
 scores = []
 
 for k in space:
@@ -56,9 +81,11 @@ for k in space:
 matplotlib.pyplot.plot(space, scores, 'ro')
 matplotlib.pyplot.xlabel('Beta')
 matplotlib.pyplot.ylabel('RMSE')
-matplotlib.pyplot.title('Baseline Predictor')
-matplotlib.pyplot.savefig('../plots/baseline_predictor.png')
+matplotlib.pyplot.title('User - User Collaborative Filtering')
+matplotlib.pyplot.savefig('../plots/user_user_collaborative_filtering.png')
 matplotlib.pyplot.show()
 
-print("------------------Baseline Predictor Testing Complete------------------")
+print("----------------User User Collaborative Filtering Testing--------------")
+
+
 print("----------------------------All Plots Saved----------------------------")
