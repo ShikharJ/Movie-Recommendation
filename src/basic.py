@@ -20,26 +20,26 @@ class Basic(object):
 
 		self.users = numpy.unique(X[:, 0])
 		self.movies = numpy.unique(X[:, 1])
-		self.num_users = X[:, 0].max()
-		self.num_movies = X[:, 1].max()
+		self.num_users = int(X[:, 0].max())
+		self.num_movies = int(X[:, 1].max())
 		self.R = numpy.zeros(shape=(self.num_users + 1, self.num_movies + 1))
 		
 		for i, x in enumerate(X):
-			self.R[x[0]][x[1]] = Y[i]
+			self.R[int(x[0])][int(x[1])] = Y[i]
 
 		for u in range(self.num_users + 1):
-			self.user_movies[i] = filter(lambda x: self.R[u][x] > 0, self.movies)
+			self.user_movies[u] = list(filter(lambda x: self.R[u][int(x)] > 0, self.movies))
 			if len(self.user_movies[u]):
-				l = [self.R[u][i] for i in self.user_movies[u]]
+				l = [self.R[u][int(i)] for i in self.user_movies[u]]
 			else:
 				l = 0
 			self.user_mean_ratings[u] = numpy.mean(l)
 			self.user_standard_deviations[u] = numpy.std(l)
 
 		for i in range(self.num_movies + 1):
-			self.movie_users[i] = filter(lambda x: self.R[x][i] > 0, self.users)
+			self.movie_users[i] = list(filter(lambda x: self.R[int(x)][i] > 0, self.users))
 			if len(self.movie_users[i]):
-				self.movie_mean_ratings[i] = numpy.mean([self.R[u][i] for u in self.movie_users[i]])
+				self.movie_mean_ratings[i] = numpy.mean([self.R[int(u)][i] for u in self.movie_users[i]])
 			else:
 				self.movie_mean_ratings[i] = 0
 
