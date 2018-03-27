@@ -1,6 +1,5 @@
 from basic import *
 import theano
-import os
 
 
 class RBM(Basic):

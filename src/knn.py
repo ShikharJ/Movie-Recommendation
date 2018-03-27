@@ -7,6 +7,9 @@ class KNearestNeighbours(Basic):
 		super(KNearestNeighbours, self).__init__()
 		self.N = N
 
+	def set_neighbourhood(self, N):
+		self.N = N
+
 	def pearson_correlation(self, u, v):
 		common_movies = numpy.intersect1d(self.user_movies[u], self.user_movies[v], assume_unique=True)
 		if (not len(common_movies)):

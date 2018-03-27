@@ -8,6 +8,12 @@ class Baseline(Basic):
 		self.beta_u = beta_u
 		self.beta_i = beta_i
 
+	def set_beta_u(self, beta_u):
+		self.beta_u = beta_u
+
+	def set_beta_i(self, beta_i):
+		self.beta_i = beta_i
+
 	def predict(self, u, i):
 		b_u = b_i = 0
 		if len(self.user_movies[u]):

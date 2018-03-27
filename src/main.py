@@ -1,11 +1,12 @@
 import numpy
 import pandas
-import pickle
+import time
 import matplotlib.pyplot
 from basic import Basic
 from baseline import Baseline
 from userusercf import UserUserCollaborativeFiltering
 from itemitemcf import ItemItemCollaborativeFiltering
+from svd import SingularValueDecomposition
 
 
 print("--------------------Begin Training and Testing Phase-------------------")
@@ -20,6 +21,7 @@ try:
 	X = train.values
 	Y = train['rating'].values
 	X = numpy.delete(X, 2, axis=1)
+	X = X.astype(int)
 
 	with open('../MovieLens 10M Dataset/test.csv', 'r') as b:
 		test = pandas.read_csv(b)
@@ -29,6 +31,7 @@ try:
 	X_test = test.values
 	Y_test = test['rating'].values
 	X_test = numpy.delete(X_test, 2, axis=1)
+	X_test = X_test.astype(int)
 
 except:
 	
@@ -45,10 +48,13 @@ print("-----------------------Baseline Predictor Testing----------------------")
 space = (numpy.linspace(1, 301, 100)).astype(int)
 scores = []
 
+model = Baseline()
+model.train(X, Y)
+
 for k in space:
 	print("Epoch: ", k)
-	model = Baseline(k, k)
-	model.train(X, Y)
+	model.set_beta_u(k)
+	model.set_beta_i(k)
 	score = model.RMSE(X_test, Y_test)
 	print("RMSE: ", score)
 	scores.append(score)
@@ -61,31 +67,116 @@ matplotlib.pyplot.savefig('../plots/baseline_predictor.png')
 matplotlib.pyplot.show()
 
 print("------------------Baseline Predictor Testing Complete------------------")
-'''
+
 
 print("----------------User User Collaborative Filtering Testing--------------")
 
-model = Baseline()
+model = UserUserCollaborativeFiltering()
 model.train(X, Y)
-space = (numpy.linspace(1, 301, 100)).astype(int)
+space = (numpy.linspace(1, 1601, 100)).astype(int)
 scores = []
+times = []
 
 for k in space:
 	print("Epoch: %i", k)
-	Y_pred = [model.predict(int(i[0]), int(i[1]), k) for i in X_test]
-	score = numpy.sqrt(numpy.mean((Y_test - Y_pred)**2))
-	print("RMSE: %f", score)
+	model.set_neighbourhood(k)
+	if k > 1:
+		start_time = time.time()
+	score = model.RMSE(X_test, Y_test)
+	if k > 1:
+		times.append(time.time() - start_time)
+	print("Time: ", time.time() - start_time)
+	print("RMSE: ", score)
 	scores.append(score)
 
-
-matplotlib.pyplot.plot(space, scores, 'ro')
-matplotlib.pyplot.xlabel('Beta')
+matplotlib.pyplot.plot(space, scores, '+')
+matplotlib.pyplot.xlabel('Nearest Neighbours')
 matplotlib.pyplot.ylabel('RMSE')
 matplotlib.pyplot.title('User - User Collaborative Filtering')
-matplotlib.pyplot.savefig('../plots/user_user_collaborative_filtering.png')
+matplotlib.pyplot.savefig('../plots/user_user_collaborative_filtering1.png')
 matplotlib.pyplot.show()
 
-print("----------------User User Collaborative Filtering Testing--------------")
+matplotlib.pyplot.plot(space[1:], times, 'k^:')
+matplotlib.pyplot.xlabel('Nearest Neighbours')
+matplotlib.pyplot.ylabel('Time (in seconds)')
+matplotlib.pyplot.title('User - User Collaborative Filtering')
+matplotlib.pyplot.savefig('../plots/user_user_collaborative_filtering2.png')
 
+print("-----------User User Collaborative Filtering Testing Complete----------")
+
+'''
+print("----------------Item Item Collaborative Filtering Testing--------------")
+
+model = ItemItemCollaborativeFiltering()
+model.train(X, Y)
+space = (numpy.linspace(1, 1601, 100)).astype(int)
+scores = []
+times = []
+
+for k in space:
+	print("Epoch: %i", k)
+	model.set_neighbourhood(k)
+	if k > 1:
+		start_time = time.time()
+	score = model.RMSE(X_test, Y_test)
+	if k > 1:
+		times.append(time.time() - start_time)
+	print("Time: ", time.time() - start_time)
+	print("RMSE: ", score)
+	scores.append(score)
+
+matplotlib.pyplot.plot(space, scores, '+')
+matplotlib.pyplot.xlabel('Nearest Neighbours')
+matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.title('Item - Item Collaborative Filtering')
+matplotlib.pyplot.savefig('../plots/item_item_collaborative_filtering1.png')
+matplotlib.pyplot.show()
+
+matplotlib.pyplot.plot(space[1:], times, 'k^:')
+matplotlib.pyplot.xlabel('Nearest Neighbours')
+matplotlib.pyplot.ylabel('Time (in seconds)')
+matplotlib.pyplot.title('Item - Item Collaborative Filtering')
+matplotlib.pyplot.savefig('../plots/item_item_collaborative_filtering2.png')
+matplotlib.pyplot.show()
+
+print("-----------Item Item Collaborative Filtering Testing Complete----------")
+
+'''
+print("------------------Singular Value Decomposition Testing-----------------")
+
+model = SingularValueDecomposition()
+model.train(X, Y)
+space = (numpy.linspace(1, 1601, 100)).astype(int)
+scores = []
+times = []
+
+for k in space:
+	print("Epoch: %i", k)
+	model.set_neighbourhood(k)
+	if k > 1:
+		start_time = time.time()
+	score = model.RMSE(X_test, Y_test)
+	if k > 1:
+		times.append(time.time() - start_time)
+	print("Time: ", time.time() - start_time)
+	print("RMSE: ", score)
+	scores.append(score)
+
+matplotlib.pyplot.plot(space, scores, '+')
+matplotlib.pyplot.xlabel('Nearest Neighbours')
+matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.title('Item - Item Collaborative Filtering')
+matplotlib.pyplot.savefig('../plots/item_item_collaborative_filtering1.png')
+matplotlib.pyplot.show()
+
+matplotlib.pyplot.plot(space[1:], times, 'k^:')
+matplotlib.pyplot.xlabel('Nearest Neighbours')
+matplotlib.pyplot.ylabel('Time (in seconds)')
+matplotlib.pyplot.title('Item - Item Collaborative Filtering')
+matplotlib.pyplot.savefig('../plots/item_item_collaborative_filtering2.png')
+matplotlib.pyplot.show()
+
+print("-------------Singular Value Decomposition Testing Complete-------------")
+'''
 
 print("----------------------------All Plots Saved----------------------------")

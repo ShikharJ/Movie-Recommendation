@@ -20,10 +20,10 @@ class SingularValueDecomposition(Basic):
 		return x
 
 	def test_train_split(self, X, n):
-        numpy.random.shuffle(X)
-        l = (int)(X.shape[0] * (n - 1) / n)
-        self.X_train, self.X_test = X[:l, :], X[l:, :]
-		self.y_test = self.X_test[:, 2]
+		numpy.random.shuffle(X)
+		l = (int)(X.shape[0] * (n - 1) / n)
+		self.X_train, self.X_test = X[:l, :], X[l:, :]
+		self.Y_test = self.X_test[:, 2]
 
 	def train(self, X, Y):
 		Basic.preprocess(self, X, Y)
@@ -48,7 +48,7 @@ class SingularValueDecomposition(Basic):
 				self.U[u] = U_temp[:]
 				if self.bias == True:
 					self.alpha[u] += self.learning_rate * (error - self.k_b * self.alpha[u])
-					self.beta[m] += self.learning_rate*(error - self.k_b*self.beta[m])
+					self.beta[m] += self.learning_rate * (error - self.k_b * self.beta[m])
 			current_error = self.validation_error()
 			if current_error < cost:
 				cost = current_error
@@ -56,8 +56,4 @@ class SingularValueDecomposition(Basic):
 				break
 
 	def validation_error(self):
-		return self.test(self.X_test, self.y_test)
-
-	def test(self, X, Y):
-		y_pred = [self.predict_rating(i[0], i[1]) for i in X]
-		return numpy.sqrt(numpy.mean((Y - y_pred) ** 2))
+		return self.RMSE(self.X_test, self.Y_test)
