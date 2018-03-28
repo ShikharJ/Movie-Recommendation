@@ -16,14 +16,14 @@ class ItemItemCollaborativeFiltering(KNearestNeighbours):
 		self.movie_neighbourhood[i] = neighbourhood[:1700]
 
 	def predict(self, u, i):
-		print("User: ", u, " Item: ", i)
 		b_u = b_i = 0
 		if len(self.user_movies[u]):
 			b_u = ((self.user_mean_ratings[u] - self.mu) * len(self.user_movies[u])) / (len(self.user_movies[u]) + 120)
 		if len(self.movie_users[i]):
-			b_i = ((self.movie_mean_ratings[u] - b_u - self.mu) * len(self.movie_users[i])) / (len(self.movie_users[i]) + 120)
+			b_i = ((self.movie_mean_ratings[i] - b_u - self.mu) * len(self.movie_users[i])) / (len(self.movie_users[i]) + 120)
 		prediction, numer, denom = self.mu + b_u + b_i, 0, 0
 		if i not in self.movie_neighbourhood:
+			print("User: ", u, " Item: ", i)
 			self.generate_neighbourhood(i)
 		for k in range(self.N):
 			j = self.movie_neighbourhood[i][k][1]

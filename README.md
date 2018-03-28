@@ -31,4 +31,4 @@ python3 main.py
 All the plots would be saved under `plots` folder. Additionally, you can change the parameter and the test conditions for various tests in `main.py` file to suit your needs.
 
 ## Notes
-Also, the official `Netflix Prize` dataset hasn't been uploaded for the size related reasons, but can be downloaded from [here.](https://www.kaggle.com/netflix-inc/netflix-prize-data). It should be noted that the dataset should work out of the box, provided the above mentioned instructions are followed. Lastly, for testing on any new dataset, please ensure that the dataset is structured in a similar manner as the `ratings.csv` file provided.
+Also, the official `Netflix Prize` dataset hasn't been uploaded for the size related reasons, but can be downloaded from [here](https://www.kaggle.com/netflix-inc/netflix-prize-data). It should be noted that the dataset should work out of the box, provided the above mentioned instructions are followed. Lastly, for testing on any new dataset, please ensure that the dataset is structured in a similar manner as the `ratings.csv` file provided.
