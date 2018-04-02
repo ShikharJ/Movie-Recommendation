@@ -26,6 +26,7 @@ try:
 
 except:
 	print("----------------------Failed To Normalize MovieId----------------------")
+	traceback.print_exc()
 	exit()
 
 else:	
