@@ -13,6 +13,12 @@ class SingularValueDecomposition(Basic):
 		self.k_b = k_b
 		self.bias = bias
 
+	def set_learning_rate(self, learning_rate):
+		self.learning_rate = learning_rate
+
+	def set_f(self, f):
+		self.f = f
+
 	def predict(self, u, i):
 		x = numpy.dot(self.U[u], self.M[i])
 		if self.bias == True:

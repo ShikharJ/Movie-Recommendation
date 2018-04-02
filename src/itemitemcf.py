@@ -13,7 +13,7 @@ class ItemItemCollaborativeFiltering(KNearestNeighbours):
 			if j != i:
 				neighbourhood.append((self.cosine_correlation(i, j), j))
 		neighbourhood = sorted(neighbourhood, reverse=True)
-		self.movie_neighbourhood[i] = neighbourhood[:1700]
+		self.movie_neighbourhood[i] = neighbourhood[:2000]
 
 	def predict(self, u, i):
 		b_u = b_i = 0
@@ -23,7 +23,6 @@ class ItemItemCollaborativeFiltering(KNearestNeighbours):
 			b_i = ((self.movie_mean_ratings[i] - b_u - self.mu) * len(self.movie_users[i])) / (len(self.movie_users[i]) + 120)
 		prediction, numer, denom = self.mu + b_u + b_i, 0, 0
 		if i not in self.movie_neighbourhood:
-			print("User: ", u, " Item: ", i)
 			self.generate_neighbourhood(i)
 		for k in range(self.N):
 			j = self.movie_neighbourhood[i][k][1]

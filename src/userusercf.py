@@ -13,7 +13,7 @@ class UserUserCollaborativeFiltering(KNearestNeighbours):
 			if v != u:
 				neighbourhood.append((self.pearson_correlation(u, v), v))
 		neighbourhood = sorted(neighbourhood, reverse=True)
-		self.user_neighbourhood[u] = neighbourhood[:1700]
+		self.user_neighbourhood[u] = neighbourhood[:2000]
 
 	def predict(self, u, i):
 		prediction, numer, denom = self.user_mean_ratings[u], 0,  0
