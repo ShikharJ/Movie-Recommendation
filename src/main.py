@@ -33,8 +33,9 @@ try:
 	X_test = numpy.delete(X_test, 2, axis=1)
 	X_test = X_test.astype(int)
 
-except:
-	
+except Exception as ex:
+
+	print(ex)
 	print("------------------------Failed To Load Dataset------------------------")
 	exit()
 
@@ -73,7 +74,7 @@ print("----------------User User Collaborative Filtering Testing--------------")
 
 model = UserUserCollaborativeFiltering()
 model.train(X, Y)
-space = (numpy.linspace(1, 1601, 100)).astype(int)
+space = (numpy.linspace(1, 2001, 100)).astype(int)
 scores = []
 times = []
 
@@ -110,7 +111,7 @@ print("----------------Item Item Collaborative Filtering Testing--------------")
 
 model = ItemItemCollaborativeFiltering()
 model.train(X, Y)
-space = (numpy.linspace(1, 1601, 100)).astype(int)
+space = (numpy.linspace(1, 2001, 100)).astype(int)
 scores = []
 times = []
 

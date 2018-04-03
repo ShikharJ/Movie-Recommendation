@@ -4,6 +4,7 @@
 print("--------------------------Pre-Processing Data--------------------------")
 
 try:
+
 	with open('../MovieLens 10M Dataset/ratings.csv', 'r') as y, open('../MovieLens 10M Dataset/ratings_cleaned.csv', 'w') as z:
 		csvfile = y.readlines()
 		z.write(csvfile[0])
@@ -24,16 +25,19 @@ try:
 	y.close()
 	z.close()
 
-except:
+except Exception as ex:
+
+	print(ex)
 	print("----------------------Failed To Normalize MovieId----------------------")
-	traceback.print_exc()
 	exit()
 
 else:	
+
 	print("--------------------MovieId Normalized Successfully--------------------")
 
 
 try:
+
 	with open('../MovieLens 10M Dataset/ratings_cleaned.csv', 'r') as a, open('../MovieLens 10M Dataset/train.csv', 'w') as b, open('../MovieLens 10M Dataset/test.csv', 'w') as c:
 		csvfile = a.readlines()
 		b.write(csvfile[0])
@@ -54,9 +58,12 @@ try:
 	b.close()
 	c.close()
 
-except:	
+except Exception as ex:
+
+	print(ex)
 	print("-----------------------Failed To Prepare Dataset-----------------------")
 	exit()
 
 else:	
+
 	print("---------------Train and Test Data Prepared Successfully---------------")
