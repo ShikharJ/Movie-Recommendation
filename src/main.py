@@ -20,10 +20,8 @@ try:
 
 	X = train.values
 	Y = train['rating'].values
-	Y = Y[:1000]
 	X = numpy.delete(X, 2, axis=1)
 	X = X.astype(int)
-	X = X[:1000]
 
 	with open('../MovieLens 10M Dataset/test.csv', 'r') as b:
 		test = pandas.read_csv(b)
@@ -32,10 +30,8 @@ try:
 
 	X_test = test.values
 	Y_test = test['rating'].values
-	Y_test = Y_test[:1000]
 	X_test = numpy.delete(X_test, 2, axis=1)
 	X_test = X_test.astype(int)
-	X_test = X_test[:1000]
 
 except Exception as ex:
 
