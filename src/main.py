@@ -20,8 +20,10 @@ try:
 
 	X = train.values
 	Y = train['rating'].values
+	Y = Y[:1000]
 	X = numpy.delete(X, 2, axis=1)
 	X = X.astype(int)
+	X = X[:1000]
 
 	with open('../MovieLens 10M Dataset/test.csv', 'r') as b:
 		test = pandas.read_csv(b)
@@ -30,8 +32,10 @@ try:
 
 	X_test = test.values
 	Y_test = test['rating'].values
+	Y_test = Y_test[:1000]
 	X_test = numpy.delete(X_test, 2, axis=1)
 	X_test = X_test.astype(int)
+	X_test = X_test[:1000]
 
 except Exception as ex:
 
@@ -106,7 +110,7 @@ matplotlib.pyplot.savefig('../plots/user_user_collaborative_filtering2.png')
 
 print("-----------User User Collaborative Filtering Testing Complete----------")
 
-'''
+
 print("----------------Item Item Collaborative Filtering Testing--------------")
 
 model = ItemItemCollaborativeFiltering()
@@ -148,15 +152,15 @@ print("-----------Item Item Collaborative Filtering Testing Complete----------")
 print("------------------Singular Value Decomposition Testing-----------------")
 
 model = SingularValueDecomposition()
-model.train(X, Y)
-space = (numpy.linspace(0.001, 0.01, 10)).astype(int)
+model.preprocess(X, Y)
+space = (numpy.linspace(0.001, 0.01, 50)).astype(int)
 scores1 = []
 scores2 = []
 
 for k in space:
 	print("Epoch: %i", k)
 	model.set_learning_rate(k)
-	score = model.RMSE(X_test, Y_test)
+	score = model.train(X, Y, X_test, Y_test)
 	print("RMSE: ", score)
 	scores1.append(score)
 
@@ -186,5 +190,5 @@ matplotlib.pyplot.savefig('../plots/singular_value_decomposition2.png')
 matplotlib.pyplot.show()
 
 print("-------------Singular Value Decomposition Testing Complete-------------")
-'''
+
 print("----------------------------All Plots Saved----------------------------")

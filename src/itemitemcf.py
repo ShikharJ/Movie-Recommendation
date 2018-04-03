@@ -18,9 +18,9 @@ class ItemItemCollaborativeFiltering(KNearestNeighbours):
 	def predict(self, u, i):
 		b_u = b_i = 0
 		if len(self.user_movies[u]):
-			b_u = ((self.user_mean_ratings[u] - self.mu) * len(self.user_movies[u])) / (len(self.user_movies[u]) + 120)
+			b_u = ((self.user_mean_ratings[u] - self.mu) * len(self.user_movies[u])) / (len(self.user_movies[u]) + 25)
 		if len(self.movie_users[i]):
-			b_i = ((self.movie_mean_ratings[i] - b_u - self.mu) * len(self.movie_users[i])) / (len(self.movie_users[i]) + 120)
+			b_i = ((self.movie_mean_ratings[i] - b_u - self.mu) * len(self.movie_users[i])) / (len(self.movie_users[i]) + 25)
 		prediction, numer, denom = self.mu + b_u + b_i, 0, 0
 		if i not in self.movie_neighbourhood:
 			self.generate_neighbourhood(i)
