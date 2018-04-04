@@ -37,7 +37,7 @@ class SingularValueDecomposition(Basic):
 			x += self.mu + self.alpha[u] + self.beta[i]
 		return x
 
-	def train(self, X, Y, X_test, Y_test):
+	def train(self, X, Y, X_val, Y_val):
 		self.U = numpy.empty((self.num_users + 1, self.f))
 		self.M = numpy.empty((self.num_movies + 1, self.f))
 		self.alpha = numpy.zeros(self.num_users + 1)
@@ -59,9 +59,9 @@ class SingularValueDecomposition(Basic):
 				if self.bias == True:
 					self.alpha[u] += self.learning_rate * (error - self.k_b * self.alpha[u])
 					self.beta[m] += self.learning_rate * (error - self.k_b * self.beta[m])
-			current_error = self.RMSE(X_test, Y_test)
+			current_error = self.RMSE(X_val, Y_val)
 			if current_error < cost:
 				cost = current_error
 			else:
 				break
-		return current_error
+		return cost

@@ -20,6 +20,7 @@ try:
 
 	X = train.values
 	Y = train['rating'].values
+	Y = Y.reshape(Y.shape[0], 1)
 	X = numpy.delete(X, 2, axis=1)
 	X = X.astype(int)
 
@@ -30,6 +31,7 @@ try:
 
 	X_test = test.values
 	Y_test = test['rating'].values
+	Y_test = Y_test.reshape(Y_test.shape[0], 1)
 	X_test = numpy.delete(X_test, 2, axis=1)
 	X_test = X_test.astype(int)
 
@@ -143,8 +145,22 @@ matplotlib.pyplot.gcf().clear()
 
 print("-----------Item Item Collaborative Filtering Testing Complete----------")
 
-
+'''
 print("------------------Singular Value Decomposition Testing-----------------")
+
+X_new = numpy.concatenate((X, Y), axis=1)
+numpy.random.shuffle(X_new)
+limit = (int)(X_new.shape[0] * 9 / 10)
+X, X_val = X_new[:limit, :], X_new[limit:, :]
+Y = X[:, 2]
+Y = Y.reshape(Y.shape[0], 1)
+Y_val = X_val[:, 2]
+Y_val = Y_val.reshape(Y_val.shape[0], 1)
+X = numpy.delete(X, 2, axis=1)
+X = X.astype(int)
+X_val = numpy.delete(X_val, 2, axis=1)
+X_val = X_val.astype(int)
+del X_new
 
 model = SingularValueDecomposition()
 model.preprocess(X, Y)
@@ -158,7 +174,7 @@ scores3 = []
 for k in space:
 	print("Epoch: %i", k)
 	model.set_learning_rate(k)
-	score = model.train(X, Y, X_test, Y_test)
+	score = model.train(X, Y, X_val, Y_val)
 	print("RMSE: ", score)
 	if score < max_error:
 		max_error = score
@@ -167,7 +183,7 @@ for k in space:
 
 matplotlib.pyplot.plot(space, scores1, '+')
 matplotlib.pyplot.xlabel('Learning Rate')
-matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.ylabel('Cross Validation Error')
 matplotlib.pyplot.title('Singular Value Decomposition')
 matplotlib.pyplot.savefig('../plots/singular_value_decomposition1.png')
 matplotlib.pyplot.gcf().clear()
@@ -180,7 +196,7 @@ best_f = 1
 for k in space:
 	print("Epoch: %i", k)
 	model.set_f(k)
-	score = model.RMSE(X, Y, X_test, Y_test)
+	score = model.train(X, Y, X_val, Y_val)
 	print("RMSE: ", score)
 	if score < max_error:
 		max_error = score
@@ -189,12 +205,12 @@ for k in space:
 
 matplotlib.pyplot.plot(space, scores2, 'k^:')
 matplotlib.pyplot.xlabel('Number of Features')
-matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.ylabel('Cross Validation Error')
 matplotlib.pyplot.title('Singular Value Decomposition')
 matplotlib.pyplot.savefig('../plots/singular_value_decomposition2.png')
 matplotlib.pyplot.gcf().clear()
 
-space = (numpy.linspace(0.001, 1, 1000))
+space = (numpy.linspace(0.001, 1, 100))
 model.set_f(best_f)
 model.set_bias(True)
 
@@ -203,7 +219,8 @@ for k in space:
 	model.set_k_u(k)
 	model.set_k_b(k)
 	model.set_k_m(k)
-	score = model.RMSE(X, Y, X_test, Y_test)
+	score = model.train(X, Y, X_val, Y_val)
+	score = model.RMSE(X_test, Y_test)
 	print("RMSE: ", score)
 	scores3.append(score)
 
@@ -215,6 +232,5 @@ matplotlib.pyplot.savefig('../plots/singular_value_decomposition3.png')
 matplotlib.pyplot.gcf().clear()
 
 print("-------------Singular Value Decomposition Testing Complete-------------")
-'''
 
 print("----------------------------All Plots Saved----------------------------")
