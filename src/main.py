@@ -153,9 +153,7 @@ numpy.random.shuffle(X_new)
 limit = (int)(X_new.shape[0] * 9 / 10)
 X, X_val = X_new[:limit, :], X_new[limit:, :]
 Y = X[:, 2]
-Y = Y.reshape(Y.shape[0], 1)
 Y_val = X_val[:, 2]
-Y_val = Y_val.reshape(Y_val.shape[0], 1)
 X = numpy.delete(X, 2, axis=1)
 X = X.astype(int)
 X_val = numpy.delete(X_val, 2, axis=1)
