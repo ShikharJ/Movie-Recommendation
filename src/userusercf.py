@@ -27,5 +27,4 @@ class UserUserCollaborativeFiltering(KNearestNeighbours):
 				denom += numpy.abs(self.user_neighbourhood[u][n][0])
 		if denom:
 			prediction += self.user_standard_deviations[u] * numer / denom
-		print("User: ", u, " Item: ", i)
 		return prediction

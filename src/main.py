@@ -46,7 +46,7 @@ else:
 '''
 print("-----------------------Baseline Predictor Testing----------------------")
 
-space = (numpy.linspace(1, 301, 100)).astype(int)
+space = (numpy.linspace(1, 300, 100)).astype(int)
 scores = []
 
 model = Baseline()
@@ -74,7 +74,7 @@ print("----------------User User Collaborative Filtering Testing--------------")
 
 model = UserUserCollaborativeFiltering()
 model.train(X, Y)
-space = (numpy.linspace(1, 2001, 100)).astype(int)
+space = (numpy.linspace(1, 2000, 100)).astype(int)
 scores = []
 times = []
 
@@ -111,7 +111,7 @@ print("----------------Item Item Collaborative Filtering Testing--------------")
 
 model = ItemItemCollaborativeFiltering()
 model.train(X, Y)
-space = (numpy.linspace(1, 2001, 100)).astype(int)
+space = (numpy.linspace(1, 2000, 100)).astype(int)
 scores = []
 times = []
 
@@ -144,20 +144,26 @@ matplotlib.pyplot.show()
 
 print("-----------Item Item Collaborative Filtering Testing Complete----------")
 
-'''
+
 print("------------------Singular Value Decomposition Testing-----------------")
 
 model = SingularValueDecomposition()
 model.preprocess(X, Y)
-space = (numpy.linspace(0.001, 0.01, 50)).astype(int)
+space = (numpy.linspace(0.001, 0.01, 50))
+max_error = 100000.0
+best_learning_rate = 0.001
 scores1 = []
 scores2 = []
+scores3 = []
 
 for k in space:
 	print("Epoch: %i", k)
 	model.set_learning_rate(k)
 	score = model.train(X, Y, X_test, Y_test)
 	print("RMSE: ", score)
+	if score < max_error:
+		max_error = score
+		best_learning_rate = k
 	scores1.append(score)
 
 matplotlib.pyplot.plot(space, scores1, '+')
@@ -169,13 +175,18 @@ matplotlib.pyplot.show()
 matplotlib.pyplot.gcf().clear()
 
 space = (numpy.linspace(1, 600, 30)).astype(int)
-model.set_learning_rate = 0.007
+model.set_learning_rate(best_learning_rate)
+max_error = 100000.0
+best_f = 1
 
 for k in space:
 	print("Epoch: %i", k)
 	model.set_f(k)
-	score = model.RMSE(X_test, Y_test)
+	score = model.RMSE(X, Y, X_test, Y_test)
 	print("RMSE: ", score)
+	if score < max_error:
+		max_error = score
+		best_f = k
 	scores2.append(score)
 
 matplotlib.pyplot.plot(space, scores2, 'k^:')
@@ -184,7 +195,29 @@ matplotlib.pyplot.ylabel('RMSE')
 matplotlib.pyplot.title('Singular Value Decomposition')
 matplotlib.pyplot.savefig('../plots/singular_value_decomposition2.png')
 matplotlib.pyplot.show()
+matplotlib.pyplot.gcf().clear()
+
+space = (numpy.linspace(0.001, 1, 1000))
+model.set_f(best_f)
+model.set_bias(True)
+
+for k in space:
+	print("Epoch: %i", k)
+	model.set_k_u(k)
+	model.set_k_b(k)
+	model.set_k_m(k)
+	score = model.RMSE(X, Y, X_test, Y_test)
+	print("RMSE: ", score)
+	scores3.append(score)
+
+matplotlib.pyplot.plot(space, scores3, 'x')
+matplotlib.pyplot.xlabel('Bias')
+matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.title('Singular Value Decomposition')
+matplotlib.pyplot.savefig('../plots/singular_value_decomposition3.png')
+matplotlib.pyplot.show()
 
 print("-------------Singular Value Decomposition Testing Complete-------------")
+'''
 
 print("----------------------------All Plots Saved----------------------------")
