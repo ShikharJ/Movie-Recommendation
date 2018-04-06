@@ -7,6 +7,7 @@ from baseline import Baseline
 from userusercf import UserUserCollaborativeFiltering
 from itemitemcf import ItemItemCollaborativeFiltering
 from svd import SingularValueDecomposition
+from rbm import RestrictedBoltzmannMachine
 
 
 print("--------------------Begin Training and Testing Phase-------------------")
@@ -145,7 +146,7 @@ matplotlib.pyplot.gcf().clear()
 
 print("-----------Item Item Collaborative Filtering Testing Complete----------")
 
-'''
+
 print("------------------Singular Value Decomposition Testing-----------------")
 
 X_new = numpy.concatenate((X, Y), axis=1)
@@ -161,6 +162,80 @@ X_val = X_val.astype(int)
 del X_new
 
 model = SingularValueDecomposition()
+model.preprocess(X, Y)
+space = (numpy.linspace(0.001, 0.01, 10))
+max_error = 100000.0
+best_learning_rate = 0.001
+scores1 = []
+scores2 = []
+scores3 = []
+
+for k in space:
+	print("Epoch: %i", k)
+	model.set_learning_rate(k)
+	score = model.train(X, Y, X_val, Y_val)
+	print("RMSE: ", score)
+	if score < max_error:
+		max_error = score
+		best_learning_rate = k
+	scores1.append(score)
+
+matplotlib.pyplot.plot(space, scores1, '+-')
+matplotlib.pyplot.xlabel('Learning Rate')
+matplotlib.pyplot.ylabel('Cross Validation Error')
+matplotlib.pyplot.title('Singular Value Decomposition')
+matplotlib.pyplot.savefig('../plots/singular_value_decomposition1.png')
+matplotlib.pyplot.gcf().clear()
+
+space = (numpy.linspace(1, 600, 10)).astype(int)
+model.set_learning_rate(best_learning_rate)
+max_error = 100000.0
+best_f = 1
+
+for k in space:
+	print("Epoch: %i", k)
+	model.set_f(k)
+	score = model.train(X, Y, X_val, Y_val)
+	print("RMSE: ", score)
+	if score < max_error:
+		max_error = score
+		best_f = k
+	scores2.append(score)
+
+matplotlib.pyplot.plot(space, scores2, 'k^:')
+matplotlib.pyplot.xlabel('Number of Features')
+matplotlib.pyplot.ylabel('Cross Validation Error')
+matplotlib.pyplot.title('Singular Value Decomposition')
+matplotlib.pyplot.savefig('../plots/singular_value_decomposition2.png')
+matplotlib.pyplot.gcf().clear()
+
+space = (numpy.linspace(0.01, 1, 10))
+model.set_f(best_f)
+model.set_bias(True)
+
+for k in space:
+	print("Epoch: %i", k)
+	model.set_k_u(k)
+	model.set_k_b(k)
+	model.set_k_m(k)
+	score = model.train(X, Y, X_val, Y_val)
+	score = model.RMSE(X_test, Y_test)
+	print("RMSE: ", score)
+	scores3.append(score)
+
+matplotlib.pyplot.plot(space, scores3, 'rx-')
+matplotlib.pyplot.xlabel('Bias')
+matplotlib.pyplot.ylabel('RMSE')
+matplotlib.pyplot.title('Singular Value Decomposition')
+matplotlib.pyplot.savefig('../plots/singular_value_decomposition3.png')
+matplotlib.pyplot.gcf().clear()
+
+print("-------------Singular Value Decomposition Testing Complete-------------")
+
+
+print("------------------Restricted Boltzmann Machine Testing-----------------")
+
+model = RestrictedBoltzmannMachine()
 model.preprocess(X, Y)
 space = (numpy.linspace(0.001, 0.01, 50))
 max_error = 100000.0
@@ -179,7 +254,7 @@ for k in space:
 		best_learning_rate = k
 	scores1.append(score)
 
-matplotlib.pyplot.plot(space, scores1, '+')
+matplotlib.pyplot.plot(space, scores1, '+-')
 matplotlib.pyplot.xlabel('Learning Rate')
 matplotlib.pyplot.ylabel('Cross Validation Error')
 matplotlib.pyplot.title('Singular Value Decomposition')
@@ -204,7 +279,7 @@ for k in space:
 matplotlib.pyplot.plot(space, scores2, 'k^:')
 matplotlib.pyplot.xlabel('Number of Features')
 matplotlib.pyplot.ylabel('Cross Validation Error')
-matplotlib.pyplot.title('Singular Value Decomposition')
+matplotlib.pyplot.title('Restricted Boltzmann Machine')
 matplotlib.pyplot.savefig('../plots/singular_value_decomposition2.png')
 matplotlib.pyplot.gcf().clear()
 
@@ -222,13 +297,13 @@ for k in space:
 	print("RMSE: ", score)
 	scores3.append(score)
 
-matplotlib.pyplot.plot(space, scores3, 'x')
+matplotlib.pyplot.plot(space, scores3, 'rx-')
 matplotlib.pyplot.xlabel('Bias')
 matplotlib.pyplot.ylabel('RMSE')
-matplotlib.pyplot.title('Singular Value Decomposition')
-matplotlib.pyplot.savefig('../plots/singular_value_decomposition3.png')
+matplotlib.pyplot.title('Restricted Boltzmann Machine')
+matplotlib.pyplot.savefig('../plots/restricted_boltzmann_machine3.png')
 matplotlib.pyplot.gcf().clear()
 
-print("-------------Singular Value Decomposition Testing Complete-------------")
-
+print("-------------Restricted Boltzmann Machine Testing Complete-------------")
+'''
 print("----------------------------All Plots Saved----------------------------")

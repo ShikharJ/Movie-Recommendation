@@ -17,7 +17,6 @@ class Basic(object):
 		self.num_movies = 0
 
 	def preprocess(self, X, Y):
-
 		self.users = numpy.unique(X[:, 0])
 		self.movies = numpy.unique(X[:, 1])
 		self.num_users = X[:, 0].max()
