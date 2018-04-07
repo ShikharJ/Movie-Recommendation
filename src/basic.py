@@ -46,9 +46,11 @@ class Basic(object):
 
 	train = preprocess
 
-	def RMSE(self, X, Y):
+	def RMSE(self, X, Y, save=False):
 		Y_pred = [self.predict(a[0], a[1]) for a in X]
 		RMSE = numpy.sqrt(numpy.mean((Y - Y_pred) ** 2))
+		if save:
+			self.Y_pred = Y_pred
 		return RMSE
 
 	def MAE(self, X, Y):

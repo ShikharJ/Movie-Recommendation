@@ -306,4 +306,62 @@ matplotlib.pyplot.gcf().clear()
 
 print("-------------Restricted Boltzmann Machine Testing Complete-------------")
 '''
+
+print("----------------------Hybrid Combinational Testing---------------------")
+
+model1 = Baseline()
+model1.train(X, Y)
+model1.set_beta_u(120)
+model1.set_beta_i(120)
+model1.RMSE(X_test, Y_test, save=True)
+
+model2 = UserUserCollaborativeFiltering()
+model2.train(X, Y)
+model2.set_neighbourhood(NUM)
+model2.RMSE(X_test, Y_test, save=True)
+
+model3 = ItemItemCollaborativeFiltering()
+model3.train(X, Y)
+model3.set_neighbourhood(2000)
+model3.RMSE(X_test, Y_test, save=True)
+
+X_new = numpy.concatenate((X, Y), axis=1)
+numpy.random.shuffle(X_new)
+limit = (int)(X_new.shape[0] * 9 / 10)
+X, X_val = X_new[:limit, :], X_new[limit:, :]
+Y = X[:, 2]
+Y_val = X_val[:, 2]
+X = numpy.delete(X, 2, axis=1)
+X = X.astype(int)
+X_val = numpy.delete(X_val, 2, axis=1)
+X_val = X_val.astype(int)
+del X_new
+
+model4 = SingularValueDecomposition()
+model4.preprocess(X, Y)
+model4.set_learning_rate(0.001)
+model4.set_f(NUM)
+model4.set_k_u(NUM)
+model4.set_k_m(NUM)
+model4.set_k_b(NUM)
+model4.train(X, Y, X_val, Y_val)
+model4.RMSE(X_test, Y_test, save=True)
+
+model5 = RestrictedBoltzmannMachine()
+model5.preprocess(X, Y)
+model5.set_learning_rate(0.001)
+model5.set_f(NUM)
+model5.set_k_u(NUM)
+model5.set_k_m(NUM)
+model5.set_k_b(NUM)
+model5.train(X, Y, X_val, Y_val)
+model5.RMSE(X_test, Y_test, save=True)
+
+X_new = numpy.concatenate((model1.Y_pred, model2.Y_pred, model3.Y_pred, model4.Y_pred, model5.Y_pred), axis=1)
+
+
+print("Final RMSE: ", score)
+
+print("-----------------Hybrid Combinational Testing Complete-----------------")
+
 print("----------------------------All Plots Saved----------------------------")
