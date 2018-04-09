@@ -48,9 +48,7 @@ class Basic(object):
 
 	def RMSE(self, X, Y, save=False):
 		Y_pred = [self.predict(a[0], a[1]) for a in X]
-		if Y_pred.shape == Y.shape:
-			continue
-		else:
+		if Y_pred.shape != Y.shape:
 			Y_pred = Y_pred.reshape(Y_pred.shape[0], 1)
 		RMSE = numpy.sqrt(numpy.mean((Y - Y_pred) ** 2))
 		if save:
