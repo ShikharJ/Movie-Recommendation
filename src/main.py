@@ -21,7 +21,6 @@ try:
 
 	X = train.values
 	Y = train['rating'].values
-	Y = Y.reshape(Y.shape[0], 1)
 	X = numpy.delete(X, 2, axis=1)
 	X = X.astype(int)
 
@@ -32,7 +31,6 @@ try:
 
 	X_test = test.values
 	Y_test = test['rating'].values
-	Y_test = Y_test.reshape(Y_test.shape[0], 1)
 	X_test = numpy.delete(X_test, 2, axis=1)
 	X_test = X_test.astype(int)
 
@@ -149,6 +147,7 @@ print("-----------Item Item Collaborative Filtering Testing Complete----------")
 
 print("------------------Singular Value Decomposition Testing-----------------")
 
+Y = Y.reshape(Y.shape[0], 1)
 X_new = numpy.concatenate((X, Y), axis=1)
 numpy.random.shuffle(X_new)
 limit = (int)(X_new.shape[0] * 9 / 10)
@@ -325,6 +324,7 @@ model3.train(X, Y)
 model3.set_neighbourhood(2000)
 model3.RMSE(X_test, Y_test, save=True)
 
+Y = Y.reshape(Y.shape[0], 1)
 X_new = numpy.concatenate((X, Y), axis=1)
 numpy.random.shuffle(X_new)
 limit = (int)(X_new.shape[0] * 9 / 10)
