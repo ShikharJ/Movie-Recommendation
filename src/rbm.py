@@ -37,7 +37,6 @@ class RestrictedBoltzmannMachine(Basic):
 				weights += self.learning_rate * (positive_associations - negative_associations) / len(self.user_movies[u])
 				self.set_weights(self.user_movies[u], w)
 				error = numpy.sqrt(numpy.sum((data - visible_probability) ** 2) / len(data))
-				print i, u, error
 
 	def get_weights(self, movies):
 		A = numpy.zeros((self.f, 1, self.k))

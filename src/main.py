@@ -237,7 +237,7 @@ print("------------------Restricted Boltzmann Machine Testing-----------------")
 model = RestrictedBoltzmannMachine()
 model.preprocess(X, Y)
 model.weight_initialize()
-space = (numpy.linspace(0.001, 0.01, 50))
+space = (numpy.linspace(0.001, 0.01, 10))
 max_error = 100000.0
 best_learning_rate = 0.001
 scores1 = []
@@ -262,7 +262,7 @@ matplotlib.pyplot.title('Restricted Boltzmann Machine')
 matplotlib.pyplot.savefig('../plots/restricted_boltzmann_machine1.png')
 matplotlib.pyplot.gcf().clear()
 
-space = (numpy.linspace(1, 600, 30)).astype(int)
+space = (numpy.linspace(1, 600, 10)).astype(int)
 model.set_learning_rate(best_learning_rate)
 max_error = 100000.0
 best_f = 1
@@ -285,7 +285,7 @@ matplotlib.pyplot.title('Restricted Boltzmann Machine')
 matplotlib.pyplot.savefig('../plots/restricted_boltzmann_machine2.png')
 matplotlib.pyplot.gcf().clear()
 
-space = (numpy.linspace(0.001, 1, 100))
+space = (numpy.linspace(0.01, 1, 10))
 model.set_f(best_f)
 
 for k in space:
