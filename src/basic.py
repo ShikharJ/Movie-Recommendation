@@ -10,8 +10,8 @@ class Basic(object):
 		self.user_mean_ratings = {}
 		self.user_standard_deviations = {}
 		self.R = 0
-		self.users = 0
-		self.movies = 0
+		self.users = {}
+		self.movies = {}
 		self.mu = 0
 		self.num_users = 0
 		self.num_movies = 0

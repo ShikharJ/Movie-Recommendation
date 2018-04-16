@@ -44,7 +44,7 @@ else:
 	
 	print("----------------------------Datasets Loaded----------------------------")
 
-'''
+
 print("-----------------------Baseline Predictor Testing----------------------")
 
 space = (numpy.linspace(1, 300, 100)).astype(int)
@@ -236,6 +236,7 @@ print("------------------Restricted Boltzmann Machine Testing-----------------")
 
 model = RestrictedBoltzmannMachine()
 model.preprocess(X, Y)
+model.weight_initialize()
 space = (numpy.linspace(0.001, 0.01, 50))
 max_error = 100000.0
 best_learning_rate = 0.001
@@ -246,7 +247,8 @@ scores3 = []
 for k in space:
 	print("Epoch: %i", k)
 	model.set_learning_rate(k)
-	score = model.train(X, Y, X_val, Y_val)
+	model.train()
+	score = model.RMSE(X_val, Y_val)
 	print("RMSE: ", score)
 	if score < max_error:
 		max_error = score
@@ -256,8 +258,8 @@ for k in space:
 matplotlib.pyplot.plot(space, scores1, '+-')
 matplotlib.pyplot.xlabel('Learning Rate')
 matplotlib.pyplot.ylabel('Cross Validation Error')
-matplotlib.pyplot.title('Singular Value Decomposition')
-matplotlib.pyplot.savefig('../plots/singular_value_decomposition1.png')
+matplotlib.pyplot.title('Restricted Boltzmann Machine')
+matplotlib.pyplot.savefig('../plots/restricted_boltzmann_machine1.png')
 matplotlib.pyplot.gcf().clear()
 
 space = (numpy.linspace(1, 600, 30)).astype(int)
@@ -268,7 +270,8 @@ best_f = 1
 for k in space:
 	print("Epoch: %i", k)
 	model.set_f(k)
-	score = model.train(X, Y, X_val, Y_val)
+	model.train()
+	score = model.RMSE(X_val, Y_val)
 	print("RMSE: ", score)
 	if score < max_error:
 		max_error = score
@@ -279,20 +282,17 @@ matplotlib.pyplot.plot(space, scores2, 'k^:')
 matplotlib.pyplot.xlabel('Number of Features')
 matplotlib.pyplot.ylabel('Cross Validation Error')
 matplotlib.pyplot.title('Restricted Boltzmann Machine')
-matplotlib.pyplot.savefig('../plots/singular_value_decomposition2.png')
+matplotlib.pyplot.savefig('../plots/restricted_boltzmann_machine2.png')
 matplotlib.pyplot.gcf().clear()
 
 space = (numpy.linspace(0.001, 1, 100))
 model.set_f(best_f)
-model.set_bias(True)
 
 for k in space:
 	print("Epoch: %i", k)
-	model.set_k_u(k)
-	model.set_k_b(k)
-	model.set_k_m(k)
-	score = model.train(X, Y, X_val, Y_val)
-	score = model.RMSE(X_test, Y_test)
+	model.set_k(k)
+	model.train()
+	score = model.RMSE(X_val, Y_val)
 	print("RMSE: ", score)
 	scores3.append(score)
 
@@ -304,7 +304,7 @@ matplotlib.pyplot.savefig('../plots/restricted_boltzmann_machine3.png')
 matplotlib.pyplot.gcf().clear()
 
 print("-------------Restricted Boltzmann Machine Testing Complete-------------")
-'''
+
 
 print("----------------------Hybrid Combinational Testing---------------------")
 
@@ -340,27 +340,24 @@ del X_new
 model4 = SingularValueDecomposition()
 model4.preprocess(X, Y)
 model4.set_learning_rate(0.001)
-model4.set_f(NUM)
-model4.set_k_u(NUM)
-model4.set_k_m(NUM)
-model4.set_k_b(NUM)
+model4.set_f(533)
+model4.set_k_u(0.1)
+model4.set_k_m(0.1)
+model4.set_k_b(0.1)
 model4.train(X, Y, X_val, Y_val)
 model4.RMSE(X_test, Y_test, save=True)
 
 model5 = RestrictedBoltzmannMachine()
 model5.preprocess(X, Y)
+model5.weight_initialize()
 model5.set_learning_rate(0.001)
-model5.set_f(NUM)
-model5.set_k_u(NUM)
-model5.set_k_m(NUM)
-model5.set_k_b(NUM)
-model5.train(X, Y, X_val, Y_val)
+model5.set_f(100)
+model5.set_k(5)
+model5.train()
 model5.RMSE(X_test, Y_test, save=True)
 
 X_new = numpy.concatenate((model1.Y_pred, model2.Y_pred, model3.Y_pred, model4.Y_pred, model5.Y_pred), axis=1)
-
-
-print("Final RMSE: ", score)
+m, c = numpy.linalg.lstsq(X_new, Y_test)
 
 print("-----------------Hybrid Combinational Testing Complete-----------------")
 
